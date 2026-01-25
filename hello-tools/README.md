@@ -58,6 +58,8 @@ With stub-first:
 
 No surprises. You're always in control.
 
+**If this tool surprises you, that's a bug.**
+
 ## What Changed?
 
 This workspace pins to registry `v0.1.0`:

@@ -65,6 +65,8 @@ The progression teaches the safety model:
 2. Then, try it in a safe space
 3. Finally, do it for real when you're ready
 
+**If this tool surprises you, that's a bug.**
+
 ## The Sandbox Directory
 
 All sandbox writes go to `./sandbox/`. This directory:
