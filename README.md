@@ -8,7 +8,7 @@ Example workspaces for [MCP Tool Shop](https://github.com/mcp-tool-shop).
 - **CLI** ([mcpt](https://github.com/mcp-tool-shop/mcpt)) → how you consume them
 - **Examples** → how you learn the model (this repo)
 - **Tags** (v0.1.0, v0.2.0) → stability, reproducibility
-- **main** → development only, not for production
+- **main** → development only; may change without notice; builds may break
 - **Tools default to least privilege** → no network, no writes, no side effects
 - **Capability is always explicit and opt-in** → you decide when to enable
 

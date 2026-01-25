@@ -58,14 +58,68 @@ Example:
 """
 
 
+def sanitize_filename(filepath: str) -> str:
+    """Extract safe filename, blocking all path traversal attempts.
+
+    Handles:
+    - Unix traversal: ../
+    - Windows traversal: ..\\
+    - URL-encoded: %2e%2e%2f, %2e%2e/
+    - Mixed slashes: ../, ..\\
+    - Drive letters: C:\\, D:/
+    - UNC paths: \\\\server\\share
+    - Doubled separators: ....//
+    """
+    import urllib.parse
+
+    # URL-decode first (handles %2e%2e%2f etc.)
+    decoded = urllib.parse.unquote(filepath)
+
+    # Normalize to forward slashes for consistent processing
+    normalized = decoded.replace("\\", "/")
+
+    # Strip drive letters (C:, D:, etc.)
+    if len(normalized) >= 2 and normalized[1] == ":":
+        normalized = normalized[2:]
+
+    # Strip UNC prefix (//server/share or \\server\share)
+    if normalized.startswith("//"):
+        normalized = normalized.lstrip("/")
+
+    # Take only the final path component (basename)
+    # This naturally strips all ../ sequences
+    filename = Path(normalized).name
+
+    # Additional safety: reject if filename is empty, just dots, or contains null
+    if not filename or filename in (".", "..") or "\x00" in filename:
+        filename = "unnamed"
+
+    return filename
+
+
 def sandbox_write(filepath: str, content: str) -> str:
     """Write to sandbox directory only."""
     sandbox = get_sandbox_dir()
     sandbox.mkdir(parents=True, exist_ok=True)
 
-    # Force file into sandbox
-    filename = Path(filepath).name
+    # Force file into sandbox with sanitized filename
+    filename = sanitize_filename(filepath)
     target = sandbox / filename
+
+    # Resolve to absolute path and verify it's still in sandbox
+    # This catches symlink escapes
+    target_resolved = target.resolve()
+    sandbox_resolved = sandbox.resolve()
+
+    if not str(target_resolved).startswith(str(sandbox_resolved)):
+        return f"""[SANDBOX MODE] Error: Path escape detected.
+
+Requested: {filepath}
+Resolved:  {target_resolved}
+Sandbox:   {sandbox_resolved}
+
+This path would escape the sandbox. Write blocked.
+"""
 
     target.write_text(content, encoding="utf-8")
 

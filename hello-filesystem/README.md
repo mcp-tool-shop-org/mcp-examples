@@ -38,8 +38,16 @@ python -m tools.file_write.main secret.txt "password123"
 Writes are allowed, but only to `./sandbox/`. Path traversal is blocked.
 
 ```bash
+# Bash/Linux/macOS:
 ALLOW_WRITE=1 python -m tools.file_write.main ../../../etc/passwd "hacked"
-# Actually writes to: ./sandbox/passwd (not /etc/passwd)
+
+# PowerShell:
+$env:ALLOW_WRITE="1"; python -m tools.file_write.main ../../../etc/passwd "hacked"
+
+# CMD:
+set ALLOW_WRITE=1 && python -m tools.file_write.main ../../../etc/passwd "hacked"
+
+# All three write to: ./sandbox/passwd (not /etc/passwd)
 ```
 
 ### Full (`ALLOW_WRITE=full`)
@@ -47,7 +55,14 @@ ALLOW_WRITE=1 python -m tools.file_write.main ../../../etc/passwd "hacked"
 Writes anywhere. You're fully in control.
 
 ```bash
+# Bash/Linux/macOS:
 ALLOW_WRITE=full python -m tools.file_write.main /tmp/real.txt "This really writes"
+
+# PowerShell:
+$env:ALLOW_WRITE="full"; python -m tools.file_write.main C:\temp\real.txt "This really writes"
+
+# CMD:
+set ALLOW_WRITE=full && python -m tools.file_write.main C:\temp\real.txt "This really writes"
 ```
 
 ## Why Three Modes?
@@ -78,6 +93,14 @@ All sandbox writes go to `./sandbox/`. This directory:
 # Clean up sandbox
 rm -rf sandbox/*
 ```
+
+## Quick Reference
+
+| Mode | Env Var | Effect |
+|------|---------|--------|
+| Disabled | (none) | Shows plan, no write |
+| Sandbox | `ALLOW_WRITE=1` | Writes to `./sandbox/` only |
+| Full | `ALLOW_WRITE=full` | Writes anywhere |
 
 ## Next Steps
 

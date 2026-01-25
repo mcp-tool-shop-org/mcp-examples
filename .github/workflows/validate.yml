@@ -81,11 +81,62 @@ jobs:
           test -f sandbox/test.txt
           rm sandbox/test.txt
 
-      - name: Test file_write path restriction
+      - name: Test file_write path traversal (unix)
         working-directory: hello-filesystem
         env:
           ALLOW_WRITE: "1"
         run: |
-          python -m tools.file_write.main "../../../evil.txt" "should be sandboxed"
+          python -m tools.file_write.main "../../../evil.txt" "unix traversal"
           test -f sandbox/evil.txt
           rm sandbox/evil.txt
+
+      - name: Test file_write path traversal (windows backslash)
+        working-directory: hello-filesystem
+        env:
+          ALLOW_WRITE: "1"
+        run: |
+          python -m tools.file_write.main '..\..\..\..\win.txt' "windows traversal"
+          test -f sandbox/win.txt
+          rm sandbox/win.txt
+
+      - name: Test file_write path traversal (url-encoded)
+        working-directory: hello-filesystem
+        env:
+          ALLOW_WRITE: "1"
+        run: |
+          python -m tools.file_write.main '%2e%2e%2f%2e%2e%2fencoded.txt' "url encoded"
+          test -f sandbox/encoded.txt
+          rm sandbox/encoded.txt
+
+      - name: Test file_write path traversal (drive letter)
+        working-directory: hello-filesystem
+        env:
+          ALLOW_WRITE: "1"
+        run: |
+          python -m tools.file_write.main 'C:\Windows\System32\evil.txt' "drive letter"
+          test -f sandbox/evil.txt
+          rm sandbox/evil.txt
+
+      - name: Test file_write path traversal (UNC path)
+        working-directory: hello-filesystem
+        env:
+          ALLOW_WRITE: "1"
+        run: |
+          python -m tools.file_write.main '\\server\share\unc.txt' "unc path"
+          test -f sandbox/unc.txt
+          rm sandbox/unc.txt
+
+      - name: Test file_write symlink escape blocked
+        working-directory: hello-filesystem
+        env:
+          ALLOW_WRITE: "1"
+        run: |
+          # Create a symlink inside sandbox pointing outside
+          mkdir -p sandbox
+          ln -sf /tmp sandbox/escape_link || true
+          # Try to write through symlink - should be blocked or write to sandbox
+          output=$(python -m tools.file_write.main "escape_link/pwned.txt" "symlink escape")
+          # Verify /tmp/pwned.txt was NOT created
+          test ! -f /tmp/pwned.txt
+          # Clean up
+          rm -f sandbox/escape_link

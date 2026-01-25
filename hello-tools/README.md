@@ -41,7 +41,14 @@ Network calls disabled by default. You decide when to enable.
 python -m tools.http_get.main https://httpbin.org/get
 
 # Real mode - actually fetches
+# Bash/Linux/macOS:
 ALLOW_NETWORK=1 python -m tools.http_get.main https://httpbin.org/get
+
+# PowerShell:
+$env:ALLOW_NETWORK="1"; python -m tools.http_get.main https://httpbin.org/get
+
+# CMD:
+set ALLOW_NETWORK=1 && python -m tools.http_get.main https://httpbin.org/get
 ```
 
 ## Why Stub-First?
@@ -73,8 +80,16 @@ registry:
 - **main** is the moving development branch
 - **Pin to tags** for reproducible builds
 
+## Quick Reference
+
+| Mode | Command | Effect |
+|------|---------|--------|
+| Disabled | `python -m tools.http_get.main URL` | Shows plan, no network |
+| Enabled | `ALLOW_NETWORK=1 ...` | Real network calls |
+
 ## Next Steps
 
 1. Explore more tools: `mcpt list --refresh`
 2. Add tools to your workspace: `mcpt add <tool-id>`
-3. Build your own stub-first tool using this pattern
+3. Try [hello-filesystem](../hello-filesystem/) for file write safety
+4. Build your own stub-first tool using this pattern
