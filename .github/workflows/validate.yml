@@ -1,0 +1,62 @@
+name: Validate Examples
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: pip install pyyaml httpx
+
+      - name: Validate mcp.yaml schema
+        run: |
+          python -c "
+          import yaml
+          import sys
+
+          with open('hello-tools/mcp.yaml') as f:
+              config = yaml.safe_load(f)
+
+          # Check required fields
+          assert 'schema_version' in config, 'Missing schema_version'
+          assert 'registry' in config, 'Missing registry'
+          assert 'ref' in config['registry'], 'Missing registry.ref'
+
+          # Fail if pinned to main (not reproducible)
+          ref = config['registry']['ref']
+          if ref == 'main':
+              print(f'ERROR: registry.ref is \"main\" - pin to a tagged release for reproducibility')
+              sys.exit(1)
+
+          print(f'✓ mcp.yaml valid (ref: {ref})')
+          "
+
+      - name: Test echo tool
+        working-directory: hello-tools
+        run: |
+          python -m tools.echo.main "CI test"
+          python -m tools.echo.main --uppercase "ci test"
+
+      - name: Test http-get stub mode
+        working-directory: hello-tools
+        run: |
+          python -m tools.http_get.main https://example.com | grep -q "STUB MODE"
+
+      - name: Test http-get real mode
+        working-directory: hello-tools
+        env:
+          ALLOW_NETWORK: "1"
+        run: |
+          python -m tools.http_get.main https://httpbin.org/get | grep -q "REAL MODE"
