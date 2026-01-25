@@ -20,27 +20,32 @@ jobs:
       - name: Install dependencies
         run: pip install pyyaml httpx
 
-      - name: Validate mcp.yaml schema
+      - name: Validate mcp.yaml schemas
         run: |
           python -c "
           import yaml
           import sys
+          from pathlib import Path
 
-          with open('hello-tools/mcp.yaml') as f:
-              config = yaml.safe_load(f)
+          examples = ['hello-tools', 'hello-filesystem']
 
-          # Check required fields
-          assert 'schema_version' in config, 'Missing schema_version'
-          assert 'registry' in config, 'Missing registry'
-          assert 'ref' in config['registry'], 'Missing registry.ref'
+          for example in examples:
+              config_path = Path(example) / 'mcp.yaml'
+              with open(config_path) as f:
+                  config = yaml.safe_load(f)
 
-          # Fail if pinned to main (not reproducible)
-          ref = config['registry']['ref']
-          if ref == 'main':
-              print(f'ERROR: registry.ref is \"main\" - pin to a tagged release for reproducibility')
-              sys.exit(1)
+              # Check required fields
+              assert 'schema_version' in config, f'{example}: Missing schema_version'
+              assert 'registry' in config, f'{example}: Missing registry'
+              assert 'ref' in config['registry'], f'{example}: Missing registry.ref'
 
-          print(f'✓ mcp.yaml valid (ref: {ref})')
+              # Fail if pinned to main (not reproducible)
+              ref = config['registry']['ref']
+              if ref == 'main':
+                  print(f'ERROR: {example}/mcp.yaml registry.ref is \"main\" - pin to a tagged release')
+                  sys.exit(1)
+
+              print(f'✓ {example}/mcp.yaml valid (ref: {ref})')
           "
 
       - name: Test echo tool
@@ -60,3 +65,27 @@ jobs:
           ALLOW_NETWORK: "1"
         run: |
           python -m tools.http_get.main https://httpbin.org/get | grep -q "REAL MODE"
+
+      # hello-filesystem tests
+      - name: Test file_write stub mode
+        working-directory: hello-filesystem
+        run: |
+          python -m tools.file_write.main test.txt "content" | grep -q "STUB MODE"
+
+      - name: Test file_write sandbox mode
+        working-directory: hello-filesystem
+        env:
+          ALLOW_WRITE: "1"
+        run: |
+          python -m tools.file_write.main test.txt "sandbox content" | grep -q "SANDBOX MODE"
+          test -f sandbox/test.txt
+          rm sandbox/test.txt
+
+      - name: Test file_write path restriction
+        working-directory: hello-filesystem
+        env:
+          ALLOW_WRITE: "1"
+        run: |
+          python -m tools.file_write.main "../../../evil.txt" "should be sandboxed"
+          test -f sandbox/evil.txt
+          rm sandbox/evil.txt
