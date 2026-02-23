@@ -4,8 +4,8 @@ Example workspaces for [MCP Tool Shop](https://github.com/mcp-tool-shop).
 
 ## How MCP Tool Shop Fits Together
 
-- **Registry** ([mcp-tool-registry](https://github.com/mcp-tool-shop/mcp-tool-registry)) → what tools exist
-- **CLI** ([mcpt](https://github.com/mcp-tool-shop/mcpt)) → how you consume them
+- **Registry** ([mcp-tool-registry](https://github.com/mcp-tool-shop-org/mcp-tool-registry)) → what tools exist
+- **CLI** ([mcpt](https://github.com/mcp-tool-shop-org/mcpt)) → how you consume them
 - **Examples** → how you learn the model (this repo)
 - **Tags** (v0.1.0, v0.2.0) → stability, reproducibility
 - **main** → development only; may change without notice; builds may break
@@ -28,5 +28,5 @@ python -m tools.echo.main "Hello, MCP!"
 
 ## Related
 
-- [mcpt](https://github.com/mcp-tool-shop/mcpt) - CLI for discovering and running tools
-- [mcp-tool-registry](https://github.com/mcp-tool-shop/mcp-tool-registry) - Tool metadata registry
+- [mcpt](https://github.com/mcp-tool-shop-org/mcpt) - CLI for discovering and running tools
+- [mcp-tool-registry](https://github.com/mcp-tool-shop-org/mcp-tool-registry) - Tool metadata registry

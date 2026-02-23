@@ -3,8 +3,21 @@ name: Validate Examples
 on:
   push:
     branches: [main]
+    paths:
+      - "hello-tools/**"
+      - "hello-filesystem/**"
+      - ".github/workflows/**"
   pull_request:
     branches: [main]
+    paths:
+      - "hello-tools/**"
+      - "hello-filesystem/**"
+      - ".github/workflows/**"
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   validate:
