@@ -1,4 +1,6 @@
-# MCP Examples
+<p align="center">
+  <img src="assets/logo.png" alt="MCP Examples" width="280" />
+</p>
 
 Example workspaces for [MCP Tool Shop](https://github.com/mcp-tool-shop).
 
