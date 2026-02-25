@@ -14,3 +14,4 @@ htmlcov/
 .venv/
 venv/
 site/.astro/
+site/node_modules/
