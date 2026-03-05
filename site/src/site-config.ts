@@ -14,7 +14,7 @@ export const config: SiteConfig = {
     headlineAccent: 'zero boilerplate.',
     description: 'Runnable example workspaces that teach the MCP Tool Shop model — read-only by default, side effects always opt-in.',
     primaryCta: { href: '#examples', label: 'Browse examples' },
-    secondaryCta: { href: '#principles', label: 'See the principles' },
+    secondaryCta: { href: 'handbook/', label: 'Read the Handbook' },
     previews: [
       { label: 'Clone', code: 'git clone https://github.com/mcp-tool-shop-org/mcp-examples' },
       { label: 'Run', code: 'cd hello-tools\npython -m tools.echo.main "Hello, MCP!"' },
