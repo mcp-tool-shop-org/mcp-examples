@@ -20,6 +20,34 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+  security-scan:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Secret scan
+        run: |
+          echo "Scanning for hardcoded secrets..."
+          cat > /tmp/secret-patterns.txt <<PATTERNS
+          PRIVATE.KEY
+          sk_live_
+          sk_test_
+          aws_secret
+          PATTERNS
+          FOUND=0
+          while IFS= read -r pattern; do
+            pattern=$(echo "$pattern" | xargs)
+            [ -z "$pattern" ] && continue
+            if git grep -lI "$pattern" -- ':!*.md' ':!.github/workflows/*' 2>/dev/null; then
+              echo "FAIL: potential secret pattern '$pattern' found"
+              FOUND=1
+            fi
+          done < /tmp/secret-patterns.txt
+          if [ "$FOUND" -eq 1 ]; then
+            exit 1
+          fi
+          echo "No hardcoded secrets detected"
+
   validate:
     runs-on: ubuntu-latest
     steps:
