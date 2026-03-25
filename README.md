@@ -38,6 +38,17 @@ cd hello-tools
 python -m tools.echo.main "Hello, MCP!"
 ```
 
+## Security & Data Scope
+
+These examples are **local-only reference code** with no network access by default.
+
+- **Data touched:** Local files in `./sandbox/` (hello-filesystem only, when ALLOW_WRITE=1)
+- **Data NOT touched:** No cloud sync, no telemetry, no analytics, no authentication
+- **Permissions:** File system writes require explicit opt-in; network requires ALLOW_NETWORK=1
+- **Path traversal:** 6+ attack vectors tested in CI (unix, windows, URL-encoded, drive letter, UNC, symlink)
+
+See [SECURITY.md](SECURITY.md) for vulnerability reporting and full threat model.
+
 ## Related
 
 - [mcpt](https://github.com/mcp-tool-shop-org/mcpt) - CLI for discovering and running tools

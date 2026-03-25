@@ -4,7 +4,7 @@
 
 | Version | Supported          |
 | ------- | ------------------ |
-| latest  | Yes                |
+| 1.0.x   | Yes                |
 
 ## Scope
 
