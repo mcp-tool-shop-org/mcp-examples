@@ -36,12 +36,16 @@ Once you are comfortable with hello-tools, move on to the filesystem example:
 
 ```bash
 cd hello-filesystem
-# Read the README first — this example demonstrates
-# safe handling of irreversible side effects (file writes)
-python -m tools.writer.main
+
+# Stub mode — see what WOULD happen, no actual write
+python -m tools.file_write.main output.txt "Hello, filesystem!"
+
+# Sandbox mode — writes only to ./sandbox/
+ALLOW_WRITE=1 python -m tools.file_write.main output.txt "Hello!"
+cat sandbox/output.txt
 ```
 
-hello-filesystem shows how MCP Tool Shop handles tools that perform real writes. Capability is always explicit and opt-in.
+hello-filesystem shows how MCP Tool Shop handles tools that perform real, irreversible writes. File writes are disabled by default (stub mode), scoped to a sandbox directory with `ALLOW_WRITE=1`, and only unrestricted with `ALLOW_WRITE=full`. Capability is always explicit and opt-in.
 
 ## Next steps
 

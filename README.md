@@ -12,7 +12,7 @@
   <a href="https://mcp-tool-shop-org.github.io/mcp-examples/"><img src="https://img.shields.io/badge/Landing_Page-live-blue" alt="Landing Page"></a>
 </p>
 
-Example workspaces for [MCP Tool Shop](https://github.com/mcp-tool-shop).
+Example workspaces for [MCP Tool Shop](https://github.com/mcp-tool-shop-org).
 
 ## How MCP Tool Shop Fits Together
 
